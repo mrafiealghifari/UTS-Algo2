@@ -30,6 +30,7 @@ public class MainApp extends Application {
         Button btnEdit = new Button("Ganti Nama");
         Button btnHapus = new Button("Hapus Data");
         Button btnTambah = new Button("Tambah Siswa");
+        Button btnReset = new Button("Tampilkan Semua");
 
         inputCari.setPromptText("Nama siswa");
 
@@ -134,17 +135,24 @@ public class MainApp extends Application {
                 tampilkanDaftar();
                 simpanDataKeFile();
             });
+
+
         });
 
-        VBox root = new VBox(10, inputCari, listView, btnUrut, btnCari, btnRata, btnEdit, btnHapus, btnTambah);
+        btnReset.setOnAction(_ -> tampilkanDaftar());
+
+        VBox root = new VBox(10, inputCari, listView, btnUrut, btnCari, btnRata, btnEdit, btnHapus, btnTambah, btnReset);
+
+
         root.setStyle("-fx-padding: 10;");
         stage.setScene(new Scene(root, 600, 550));
         stage.setTitle("Aplikasi Nilai Siswa");
         stage.show();
     }
 
+
     private void bacaDataSiswa() {
-        File file = new File("siswa.txt");
+        File file = new File("datasiswa.txt");
         if (!file.exists()) return;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
@@ -164,10 +172,11 @@ public class MainApp extends Application {
     }
 
     private void simpanDataKeFile() {
-        try (PrintWriter writer = new PrintWriter("siswa.txt")) {
+        try (PrintWriter writer = new PrintWriter("datasiswa.txt")) {
             for (Siswa s : daftarSiswa) {
                 writer.println(s.getNama() + "," + s.getNim() + "," + s.getMatematika() + "," + s.getIpa() + "," + s.getBahasa());
             }
+            System.out.println("Data berhasil disimpan ke file.");
         } catch (IOException e) {
             showAlert("Gagal menyimpan ke file: " + e.getMessage());
         }
