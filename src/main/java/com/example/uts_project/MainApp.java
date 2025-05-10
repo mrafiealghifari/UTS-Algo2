@@ -3,6 +3,7 @@ package com.example.uts_project;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -77,9 +78,29 @@ public class MainApp extends Application {
         });
 
         btnHapus.setOnAction(_ -> {
-            daftarSiswa.sort(Comparator.comparing(Siswa::getNama));
-            String cari = inputCari.getText().trim();
-            int index = binarySearch(daftarSiswa, cari);
+            String selectedItem = listView.getSelectionModel().getSelectedItem();
+            if (selectedItem == null || daftarSiswa.isEmpty()) {
+                showAlert("Pilih siswa yang ingin dihapus dari daftar.");
+                return;
+            }
+
+            // Ekstrak nama dari string item yang ditampilkan
+            String[] parts = selectedItem.split("\\|");
+            if (parts.length < 2) {
+                showAlert("Format data tidak dikenali.");
+                return;
+            }
+            String nama = parts[0].trim(); // Ambil nama dari teks listView
+
+            // Cari indeks siswa berdasarkan nama
+            int index = -1;
+            for (int i = 0; i < daftarSiswa.size(); i++) {
+                if (daftarSiswa.get(i).getNama().equalsIgnoreCase(nama)) {
+                    index = i;
+                    break;
+                }
+            }
+
             if (index >= 0) {
                 daftarSiswa.remove(index);
                 tampilkanDaftar();
@@ -141,7 +162,9 @@ public class MainApp extends Application {
 
         btnReset.setOnAction(_ -> tampilkanDaftar());
 
-        VBox root = new VBox(10, inputCari, listView, btnUrut, btnCari, btnRata, btnEdit, btnHapus, btnTambah, btnReset);
+        HBox baris1 = new HBox(10,btnUrut, btnCari, btnRata);
+        HBox baris2 = new HBox(10, btnEdit, btnHapus, btnTambah, btnReset);
+        VBox root = new VBox(10, inputCari, listView, baris1, baris2);
 
 
         root.setStyle("-fx-padding: 10;");
